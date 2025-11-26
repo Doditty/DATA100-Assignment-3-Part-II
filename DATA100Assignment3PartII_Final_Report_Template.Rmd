@@ -1,0 +1,157 @@
+---
+title: "Happiness, Climate Awareness, and COVID-19 Across Countries"
+subtitle: "Exploring Disparate Data: Part 3 - Final Report"
+author: "Piping data and piping moms"
+date: "Due November 26th, 2025"
+output: pdf_document
+---
+
+List your group members, including their student numbers, here:
+
+- Jack St. John (169137076)
+- Boden White (169037964)
+- Isaac Zeng (169040854)
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+
+  echo = FALSE,
+
+  warning = FALSE,
+
+  message = FALSE
+
+)
+
+```
+
+# Abstract
+
+This report explores how climate change awareness, COVID-19 cases, and national happiness relate to each other across countries. Using three cleaned data sets on climate change awareness (climate_awareness), COVID-19 case counts in 2020 (covid_2020), and happiness (happiness), we join the data by country to form a single analysis table. We compute summary statistics and create three visualizations to exaime how the share of people who say they know "a lot" about climate change and the burden of COVID-19 cases are associated with national happiness scores. Overall, we find a modest positive association between climate awareness and happiness, while the relationship between COVID-19 case counts happiness appears weaker and more variable across continents.
+
+# Introduction
+Climate change, the COVID-19 pandemic, and well-being are three of the most important global issues of the past decade. Governments and researchers are interested not only in physical outcomes such as case counts or temperature changes, but also in how people understand these issues and how they relate to quality of life. Public awareness of climate change may influence policy support and adaptation, while the COVID-19 pandemic has affected health systems, economies, and everyday life. Happiness data provide a way to summarize how people feel about their lives in different countries.
+
+# Data Description
+
+## \<\<Climate awareness data (climate_awareness.parquet)\>\>
+
+```{r load_data1}
+library(tidyverse)
+library(arrow)
+
+climate_awareness <- read_parquet("climate_awareness.parquet")
+
+climate_awareness
+```
+
+The climate awareness data come from a climate change opinion survey provided in the course material, based on results compiled on the Humanitarian Data Exchange (HDX). The original file contains survey responses from many countries about how familiar people say they are with the “actual definitions of climate change”. In our cleaned `climate_awareness` data set, each row represents a country. The main variables we use are `country` and several awareness categories: `aware_no`, `aware_alittle`, `aware_moderate`, `aware_alot`, and `aware_refuse`, which record the number of respondents in each category. The column `aware_base` gives the total number of respondents forming the base for these counts.
+
+In order to clean the data, we reformatted the data using pivot_longer() to convert the wide layout into a long format with a country variable and a score variable. We then cleaned the awareness category names by recoding long text descriptions into shorter codes such as aware_no, aware_alittle, aware_moderate, and aware_alot. After that, we used pivot_wider() to produce a data set with one row per country and separate columns for each awareness category, and ensured that aware_base correctly recorded the total number of respondents. Finally we saved the cleaned data as climate_awareness.parquet for use in this report.
+
+## \<\<COVID-19 cases data (covid_2020.parquet)\>\>
+
+```{r load_data2}
+library(tidyverse)
+library(arrow)
+
+covid_2020 <- read_parquet("covid_2020.parquet")
+
+covid_2020
+```
+
+The data come from a daily case-count data set, based on data maintained by Our World in Data. The original data track the cumulative number of confirmed COVID-19 cases over time for locations around the world. In our cleaned covid_2020 data set, each row represents a counter, and the main variables we use are country, continent, and total_cases, which records the total number of confirmed COVID-19 cases for that country in 2020.
+
+In order to clean the data, we filtered the original data to keep only observations from the year 2020 and removed rows corresponding to aggregate regions (such as "World") or locations without known continents. We then grouped the data by country and continent and took the maximum value of the cumulative case count over 2020 to represent the total number of confirmed cases that year, stored in the total_cases column, We kept only the variables relevent for this analysis and saved the result as covid_2020.parquet.
+
+## \<\<Happiness data (happiness.parquet)\>\>
+
+```{r load_data3}
+library(tidyverse)
+library(arrow)
+
+happiness <- read_parquet("happiness.parquet")
+
+happiness
+```
+
+The data come from the World Happiness Report, which compiles survey-based measures of life satisfaction across countries. In the original file, each row corresponds to a country in a particular year and includes a "ladder" score of happiness aong with several explanatory variables related to income, social support, and health. In our cleaned happiness data set, each row represents a country in its most recent available year, and the main variables we use are country, year, and ladder score, the average life satisfaction score from 0 to 10.
+
+In order to clean the data, we first standardized the column names using janitor::clean_names() and renamed the country variable to country so that it would be consistent with our other data sets. We sorted the data by country and year and then grouped by country to keep only the most recent year of data for each country. We removed rows with missing ladder_score values and selected a subset of variables that were relevant for our analysis, including the outcome ladder_score. Finally, we saved the cleaned data as happiness.parquet.
+
+## Combining the Data
+
+Explain how any combinations of data were performed. Explain what kind of join was needed, whether columns had to be modified (for example, matching "country" names.)
+
+```{r}
+analysis_data <- happiness |>
+  left_join(climate_awareness, by="country") |>
+  left_join(covid_2020, by="country") |>
+  mutate(
+    share_aware_alot = aware_alot / aware_base
+  )
+```
+
+# Exploratory Data Analysis
+
+To achieve our goals, we explored the data by...
+
+We explored many aspects of the data, but will demonstrate three. These are \<\<insight 1\>\>, \<\<insight 2\>\>, and \<<insight3>\>
+
+The first aspect that we found interesting is shown in \@ref(fig:insight1). The insight should be specific to the data shown, not a general statement beyond the data (leave that for the conclusion).
+
+```{r insight1, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
+# This is an example of how you can control figures and captions in
+# an R chunk. Note that you can reference figures using:
+# \@ref(fig:insight1), where "insight1" is the label of this code
+# chunk (the first bit of text after the "r" in "```{r label, options...}")
+```
+
+This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
+
+```{r summary_stats}
+# Calculate the relevant summary statistics here.
+# Note that the "kable" function in the "knitr" package
+# is convenient for making nice tables. Other packages can
+# do much fancier things with tables, but keep in mind that
+# the insights should be the star, not the formatting.
+```
+
+The next insight that we found is shown in \@ref(fig:insight2).
+
+```{r insight2, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
+# This figure will have a height of 4 and a width of 6.
+# Feel free to change this, and to apply different sizes
+# to the other figures you create.
+```
+
+Finally, \@ref(fig:insight3) shows ...
+
+```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
+```
+
+# Conclusion and Future Work
+
+Overall, we found \<<general ideas>\>.
+
+A second paragraph about our findings.
+
+The next steps in this analysis are...
+
+The limitations of this analysis are as follows. (Do not simply list potential issues with sampling, but relate them to your analysis and how they affect your conclusions. An honest and complete acknowledgement of the limitations makes the analysis more trustworthy.)
+
+# References
+
+I am not strict about MLA or APA style or anything like that. For this report, I would much rather have your citations be easy to match to your insights.
+
+The easiest way is to use Rmd's [footnote](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#inline-formatting) syntax. This will put a number beside the word where the footnote appears, and the full text of the footnote at the bottom of the page (pdf) or end of the document (html). The syntax is:[^1], where I suggest that you put in something like this[^2] to make references for this assignment.
+
+[^1]: See the source view to see this footnote
+
+[^2]: The relevance to the insight is ... . From \<<name of source and name of article>\>, published on \<<date>\>, url: \<<link to page>\>
+
+Alternatively, you could make a list of citations with their main arguments and why they're relevent to your insights, methods, etc.
+
+The link above also references "bibtex" files. These are also extremely convenient, but have a steep learning curve and they make it difficult to tie them to an insight. If you use bibtext, then make sure that you provide a sentence to describe the source and it's relevance when you cite it - don't just add citations to the end of a sentence (this is common practice in academia, but I want to know that your citations are directly relevant for this assignmnet).
