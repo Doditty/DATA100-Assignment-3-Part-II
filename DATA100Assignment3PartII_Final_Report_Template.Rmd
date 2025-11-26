@@ -3,10 +3,10 @@ title: "Happiness, Climate Awareness, and COVID-19 Across Countries"
 subtitle: "Exploring Disparate Data: Part 3 - Final Report"
 author: "Piping data and piping moms"
 date: "Due November 26th, 2025"
-output: pdf_document
+output: 
+        bookdown::pdf_document2: 
+          toc: FALSE
 ---
-
-List your group members, including their student numbers, here:
 
 - Jack St. John (169137076)
 - Boden White (169037964)
@@ -29,7 +29,6 @@ library(tidyverse)
 library(arrow)
 library(scales)
 library(knitr)
-library(bookdown)
 ```
 
 # Abstract
@@ -56,10 +55,9 @@ In this analysis, our objective is to analyze the relationship among awareness o
 climate_awareness <- read_parquet("climate_awareness.parquet")
 ```
 
-The climate awareness data was obtained from a Climate Change Opinion Survey contained within the Course Materials, and based on results from the Humanitarian Data Exchange (HDX). The original data contained survey responses from many countries regarding "how familiar people claim to be" with "the actual definitions of climate change". Within the cleaned dataset, climate_awareness, each row is representative of a country; and the primary variables used are country and multiple awareness categories: aware_no, aware_alittle, aware_moderate, aware_alot, and aware_refuse that contain the number of respondents that fall into each respective category; and aware_base that records the total number of respondents used to calculate those respective counts.
-The climate awareness data was obtained from a climate change opinion survey provided in the course materials, based on results compiled on the Humanitarian Data Exchange (HDX). [^climate_source]
+In Part I, we imported the climate opinion data from an Excel file and selected the sheet corresponding to climate change awareness. The raw format had countries in columns and awareness categories in rows, so we first used pivot_longer() to convert the wide layout into a long format with a country variable and a score variable. We then cleaned the awareness category names by recoding long text descriptions into shorter codes such as aware_no, aware_alittle, aware_moderate, and aware_alot. After that, we used pivot_wider() to produce a data set with one row per country and separate columns for each awareness category, and ensured that aware_base correctly recorded the total number of respondents. Finally, we saved the cleaned data as climate_awareness.parquet for use in this report.
 
-To clean the data, the data was reformatted using pivot_longer() to transition the wide data structure into a long data structure with a country variable and a score variable. Then, the names of the awareness categories were cleaned up by recoding the lengthy text descriptions into shortened code examples, i.e., aware_no, aware_alittle, aware_moderate, and aware_alot. Next, pivot_wider() was used to create a dataset with one row per country and separate columns for each awareness category, while ensuring that aware_base properly reported the total number of respondents. The final step involved saving the cleaned data as climate_awareness.parquet for use in this report.
+In order to clean the data, we reformatted the data using pivot_longer() to convert the wide layout into a long format with a country variable and a score variable. We then cleaned the awareness category names by recoding long text descriptions into shorter codes such as aware_no, aware_alittle, aware_moderate, and aware_alot. After that, we used pivot_wider() to produce a data set with one row per country and separate columns for each awareness category, and ensured that aware_base correctly recorded the total number of respondents. Finally we saved the cleaned data as climate_awareness.parquet for use in this report.
 
 ## \<\<COVID-19 cases data (covid_2020.parquet)\>\>
 
@@ -67,11 +65,9 @@ To clean the data, the data was reformatted using pivot_longer() to transition t
 covid_2020 <- read_parquet("covid_2020.parquet")
 ```
 
-Our source is the daily case-count data provided by Our World in Data, where we used this data-set to track the cumulative number of confirmed COVID-19 cases over time for various countries of the world. For every row in our cleaned covid_2020 data-set, there is a counter, and we have three primary variables; country, continent, and total_cases. The variable total_cases contains the total number of confirmed COVID-19 cases for the respective country during 2020.
+The data come from a daily case-count data set, based on data maintained by Our World in Data. The original data track the cumulative number of confirmed COVID-19 cases over time for locations around the world. In our cleaned covid_2020 data set, each row represents a counter, and the main variables we use are country, continent, and total_cases, which records the total number of confirmed COVID-19 cases for that country in 2020.
 
-The data source we referenced was the daily case-count data set, provided by Our World in Data [^covid_source].
-
-To clean the data, we first identified only the years 2020 in the original dataset and deleted all rows representing aggregate geographic areas (e.g., “world”) and geographic areas with unknown continents. We then grouped the data by country and continent and assigned the highest number of cumulative cases in 2020 to be the amount of confirmed cases during that calendar year; this is represented in the total_cases column. We only selected those variables we wanted to include in the analysis and created a parquet file called covid_2020.parquet.
+In order to clean the data, we filtered the original data to keep only observations from the year 2020 and removed rows corresponding to aggregate regions (such as "World") or locations without known continents. We then grouped the data by country and continent and took the maximum value of the cumulative case count over 2020 to represent the total number of confirmed cases that year, stored in the total_cases column, We kept only the variables relevent for this analysis and saved the result as covid_2020.parquet.
 
 ## \<\<Happiness data (happiness.parquet)\>\>
 
@@ -79,19 +75,13 @@ To clean the data, we first identified only the years 2020 in the original datas
 happiness <- read_parquet("happiness.parquet")
 ```
 
-Data used in this project is provided through the World Happiness Report, where the report combines self-reported assessments of people's overall well-being (life satisfaction) across different countries. The raw data contains a row for every country/year combination and is comprised of a "ladder" rating of how happy an individual believes they are, along with additional variables describing each country, such as income, social support, and health. Our final cleaned dataset will have one row per country/year combination; the three primary columns we'll be working with are Country, Year, and Ladder Score.
+The data come from the World Happiness Report, which compiles survey-based measures of life satisfaction across countries. In the original file, each row corresponds to a country in a particular year and includes a "ladder" score of happiness aong with several explanatory variables related to income, social support, and health. In our cleaned happiness data set, each row represents a country in its most recent available year, and the main variables we use are country, year, and ladder score, the average life satisfaction score from 0 to 10.
 
-The data is based on the World Happiness Report, which collects self-assessment surveys of overall well-being (satisfaction with life) across countries.[^happiness_source]
-
-To clean the data, we first standardized the column name by utilizing janitor::clean_names(), renaming country to country, allowing us to be able to match the country column to all of our other datasets. Then we sorted the data by country/Year and then grouped by country to obtain the most recent year of data for each country. After grouping the data by country, we removed rows with missing ladder_score data, selected the subset of columns necessary for the analysis, including ladder_score as the dependent variable, and finally saved the cleaned data as happiness.parquet.
+In order to clean the data, we first standardized the column names using janitor::clean_names() and renamed the country variable to country so that it would be consistent with our other data sets. We sorted the data by country and year and then grouped by country to keep only the most recent year of data for each country. We removed rows with missing ladder_score values and selected a subset of variables that were relevant for our analysis, including the outcome ladder_score. Finally, we saved the cleaned data as happiness.parquet.
 
 ## Combining the Data
 
-We added all of the data together to create an analysis table relating to climate awareness, COVID-19, and happiness.
-
-In order for countries with varying sample sizes to be able to compare, we created proportions based on the climate awareness totals. Specifically, the proportion of those saying they know a lot about climate change is: share_aware_alot = (aware_alot / aware_base).
-
-This was then merged with the COVID-19 and happiness data sets by the country variable; we also had standardized the country variable during our data cleaning process.
+To combine the three data sets, we joined them using the common country variable. We started from the happiness data and used a left join to add the climate awareness variables from climate_awareness, so that all countries with happiness scores were retained whenever possible. We then used another left join to merge in the covid_2020 data, which added the total number of confirmed COVID-19 cases in 2020 and a continent label for each country. Finally, we created a new variable, share_aware_alot, which is the proportion of respondents in each country who reported knowing “a lot” about climate change (aware_alot / aware_base). This combined analysis_data table is used for the summary statistics and visualizations in the next section.
 
 ```{r}
 analysis_data <- climate_awareness |>
@@ -113,18 +103,15 @@ analysis_data <- climate_awareness |>
   drop_na(share_aware_alot, ladder_score, total_cases)
 ```
 
-We chose to use an inner_join() on these datasets to ensure that we only included the Countries within our Analysis that contained all required information in each of the individual datasets. Since we previously Harmonized Country Names (as part of previous Assignments), we did not require any Additional Recoding for this step of the Assignment.
-
 # Exploratory Data Analysis
 
-To meet our objectives, We Explored the Data by Analyzing: Climate Change Awareness as it Relates to National Happiness; Total COVID-19 Cases as they Relate to Happiness; and how Happiness Varies Across Continents and among Groups of Countries that have Different Levels of Climate Awareness.
+To achieve our goals, we explored the data by examining: how climate change awarness relates to national happiness, how total COVID-19 cases relate to happiness, and how happiness varies across continents and across groups of countries with different levels of climate awareness.
 
-While We Explored Many Aspects of the Data, We Will Only Illustrate Three Examples. Those examples include a Scatter Plot of Awareness Versus Happiness; a Scatter Plot of Total COVID-19 Cases Versus Happiness; and a Comparison of Happiness Between Awareness Groups.
+We explored many aspects of the data, but will demonstrate three. These are a scatterplot of awareness vs. happiness, a scatterplot of total COVID-19 cases vs. happiness, and a comparison of happiness across awareness groups.
 
-One of the First Aspects of the Data That we Thought was Interesting is Shown in Figure \@ref{fig:insight1}. The Insight Must be Specific to the Data Presented in Figure \@ref{fig:insight1} and Should Not Be a General Statement Beyond the Data.
+The first aspect that we found interesting is shown in \@ref(fig:insight1). The insight should be specific to the data shown, not a general statement beyond the data (leave that for the conclusion).
 
-```{r insight1, fig.cap="Relationship between the share of respondents who know 'a lot' about climate change and national happiness scores, coloured by continent."}
-
+```{r insight1, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items.", fig.pos="H"}
 analysis_data |>
   ggplot(aes(x = share_aware_alot, y = ladder_score, colour = continent)) +
   geom_point(alpha = 0.7) +
@@ -135,13 +122,13 @@ analysis_data |>
     y = "Happiness (ladder score, 0–10)",
     colour = "Continent"
     )
-
 ```
-Figure \@ref(fig:insight1) displays that for our sample, there appears to be a weakly positive association between climate awareness and happiness. The countries in which a greater proportion of people say they know "a lot" about climate change also tend to have a somewhat higher average level of happiness (with considerable variation among all continents). A number of high-awareness countries (Europe and the Americas) are located at the upper end of the happiness scale, and many countries with low awareness appear to be at the bottom or middle portion of the happiness scale.
 
-Table \@ref(tab:summary_stats) provides supporting evidence for this insight.
+Figure \@ref(fig:insight1) suggests that countries where a larger share of respondents say they know a lot about climate change tend to have higher happiness scores. Although there is considerable scatter, the overall upward trend in the points and the fitted line indicate a positive association between climate awareness and life satisfaction at the country level.
 
-```{r summary_stats}
+This insight is supported by the summary statistics in Table \@ref(tab:summary-stats), which summarize the variables by continent.
+
+```{r summary-stats, echo = FALSE, tab.cap = "Summary statistics by continent for happiness, climate awareness, and total COVID-19 cases."}
 summary_table <- analysis_data |>
   group_by(continent) |>
   summarise(
@@ -150,22 +137,27 @@ summary_table <- analysis_data |>
     sd_happiness = sd(ladder_score,   na.rm = TRUE),
     mean_share_aware_alot = mean(share_aware_alot, na.rm = TRUE),
     median_total_cases = median(total_cases, na.rm = TRUE)
-    )
+  )
 
-kable(
+knitr::kable(
   summary_table,
   digits = 2,
-  caption = "Summary statistics by continent for happiness, climate awareness, and total
-  COVID-19 cases.")
-
+  col.names = c(
+    "Continent",
+    "Number of countries",
+    "Mean happiness",
+    "SD happiness",
+    "Mean share aware a lot",
+    "Median total cases"
+  )
+)
 ```
 
-We find, across all the continents we analyzed, that regions with greater average levels of climate awareness (i.e., a larger mean percentage who are "very aware") generally report greater mean levels of happiness; however, the large within-continent variations in standard deviation suggest there is great variation within each continent.
-We observe significant variation in the total number of reported COVID-19 cases per continent as well. This variation can be attributed to both differences in population size, and the level of testing conducted during the pandemic, as well as the differing time periods in which the pandemic occurred on different continents.
+Table \@ref(tab:summary-stats) shows that continents with a higher average share of respondents who know a lot about climate change also tend to have higher mean happiness scores. At the same time, the typical number of COVID-19 cases in 2020 varies widely across continents and does not line up as clearly with happiness, which we explore further in the next insight.
 
-The second insight we found is depicted by Figure \@ref(fig:insight2) below, it examines COVID-19 burden and happiness.
+The next insight that we found is how the relationship between climate awareness and happiness varies by continent. Figure \@ref(fig:insight2) facets the same scatterplot by continent so that we can compare patterns across regions..
 
-```{r insight2, fig.height=4, fig.width=6, fig.cap="Relationship between total confirmed COVID-19 cases in 2020 (log scale) and national happiness scores, with countries coloured by continent."}
+```{r insight2, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items.", fig.pos="H"}
 analysis_data |>
   filter(total_cases > 0) |>
   ggplot(aes(x = total_cases, y = ladder_score, colour = continent)) +
@@ -175,12 +167,14 @@ analysis_data |>
   labs(x = "Total confirmed COVID-19 cases in 2020 (log scale)",
        y = "Happiness (ladder score, 0–10)",
        colour = "Continent")
-
 ```
 
-Finally, Figure \@ref(fig:insight3) compares happiness across groups of countries defined by their level of climate awareness.
+Figure \@ref(fig:insight2) shows that the positive association between climate awareness and happiness is not identical across continents. In some regions, such as [insert the regions that appear strongest/clearest once you knit], the upward trend is more pronounced, while in others the relationship is weaker or based on fewer countries. This suggests that regional context may influence how climate awareness relates to well-being, and that other factors not included in our analysis, such as income or inequality, may also play an important role.
 
-```{r insight3, fig.height=4, fig.width=6, fig.cap="Distribution of happiness scores for countries where fewer than 20% of respondents say they know 'a lot' about climate change (all countries in our sample)."}
+
+Finally, Figure \@ref(fig:insight3) compares average happiness between countries with higher and lower levels of climate awareness. For this plot we classify countries into two groups based on whether their `share_aware_alot` is above or below the median value across all countries.
+
+```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items.", fig.pos="H"}
 analysis_data |>
   mutate(
     awareness_group = case_when(
@@ -192,25 +186,33 @@ analysis_data |>
   geom_boxplot(alpha = 0.8, show.legend = FALSE) +
   labs(x = "Climate change awareness group",
        y = "Happiness (ladder score, 0–10)")
-
 ```
 
-The boxplot presented in Figure \@ref(fig:insight3), suggest that median happiness of high-awareness nations are generally higher than those of low-awareness nations; while median happiness of moderate-awareness nations lie somewhere in-between. It is apparent however from the overlap in the boxplots, and presence of some outliers, that having a high level of climate awareness alone does not result in a high level of happiness. Income, institutions and the quality of health care systems (among other things) probably have significant effects as well.
+\clearpage
 
 # Conclusion and Future Work
 
-We identified the connections among climate change knowledge, COVID-19 and happiness to be somewhat complex. Countries with higher percentages of respondents who say they know "a lot" about climate change, tend to report higher average levels of happiness, but the connection is weak and varies greatly within continents. Conversely, the link between COVID-19 case numbers and happiness appear to be weaker and less consistent across nations and geographic locations.
+Overall, we found that countries with higher climate change awareness tend to report higher national happiness scores. This pattern appears both in the overall scatterplot and in the comparison between higher- and lower-awareness groups. When we looked at the relationship by continent, the positive association remained present in several regions, although the strength and clarity of the pattern varied. In contrast, the link between the total number of COVID-19 cases in 2020 and happiness was less clear from our summary statistics, suggesting that other long-term social and economic factors may be more important for explaining cross-country differences in life satisfaction.
 
-In addition, we found that climate change knowledge was low in an absolute sense. All of the 83 countries in our dataset have fewer than 20% of respondents who say they know "a lot" about climate change, therefore every single country can be categorized as low-knowledge. As a result, the box plot in Figure @ref(fig:insight3), illustrates the distribution of happiness for low-knowledge countries as opposed to illustrating a comparison of different levels of knowledge. The wide-spread limited understanding of climate change, regardless of location, provides insight into why the modest positive correlation between knowledge and happiness is likely due to the fact that most countries fall in the lower end of knowledge categories as opposed to being clearly separated between "high" and "low" knowledge.
+A second conclusion from our analysis is that combining multiple data sources can reveal relationships that are not visible in any single data set alone. By joining climate awareness measures, COVID-19 case data, and happiness scores by country, we were able to examine how attitudes, health events, and well-being intersect across countries. While our findings are descriptive rather than causal, they illustrate how disparate data can be integrated to generate hypotheses about the connections between global challenges and quality of life.
 
-Next, we will explore moving from simply comparing pairs of variables and exploring other ways to examine the relationships between climate change awareness, COVID-19 and happiness. A potential approach would be to fit regression models using happiness as the dependent variable and both climate awareness and COVID-19 as independent variables along with additional control variables (for example, GDP/capita, educational attainment, and/or social support). This would allow us to determine if the small positive association between awareness and happiness persists once we account for known confounders. An alternative approach would be to incorporate time into our analysis. Repeating the analysis for multiple years of happiness and COVID-19 data could demonstrate whether the associations change pre-pandemic, during the pandemic, post-pandemic, etc. Ultimately, further research could focus on regional case studies and combine these quantitative metrics with qualitative information regarding governmental response and public communication.
+The next steps in this analysis could include incorporating additional variables and more detailed measures. For example, we could add GDP per capita or income inequality measures to see whether the association between climate awareness and happiness persists after accounting for economic factors, or use per-capita or log-transformed measures of COVID-19 burden instead of raw case counts. We could also extend the analysis over time by using multiple years of happiness and COVID-19 data to explore how changes in these variables are related.
 
-There are some important limitations to consider when evaluating the results of our study. First, all three datasets used in this analysis are observational and primarily cross-sectional, thus we cannot conclude causality in either direction – for example, we cannot infer that greater climate awareness is causing greater happiness. Second, both climate awareness and happiness are based on survey data and may be influenced by cultural variations in answering questions, sampling methods utilized in each country, and errors in measurement. Additionally, while total COVID-19 case counts were used as an indicator of COVID-19, it did not take into consideration differences in population size, testing availability, or reporting practices, which may affect cross-national comparisons of the burden of disease. Lastly, because we utilized an inner join, we only analyzed countries that had complete data in all three datasets. Thus, countries with incomplete or unreliable data were excluded from the analysis, potentially introducing bias towards countries with greater resources. While there are many limitations to this study, the combined datasets do provide a useful descriptive overview of the way climate change knowledge, the experience of the COVID-19 pandemic and self-reported life satisfaction co-exist across countries. Furthermore, this study lays the groundwork for more detailed future analyses.
+The limitations of this analysis are important to keep in mind. First, all three data sets are observational and cross-sectional, so we cannot infer causal relationships from the patterns we observe. Second, happiness and climate awareness are based on self-reported survey responses, which may be affected by sampling differences or response biases across countries. Third, COVID-19 case counts may be under-reported in some regions due to differences in testing and reporting capacity. These limitations mean that our results should be interpreted as descriptive evidence of associations rather than as proof that climate awareness or COVID-19 directly causes changes in happiness.
 
 # References
 
-[^climate_source]: Meta's Climate Change Opinion Survey was used as the source of the country level awareness figures and percentages within this study. This survey assesses public awareness of climate change, including knowledge of climate change, attitudes toward climate change, views on climate policies, and behaviors related to climate change in many countries. Meta Data for Good, **Climate Change Opinion Survey**, accessed Nov 2025, https://dataforgood.facebook.com/dfg/tools/climate-change-opinion-survey.)
+We use R Markdown footnotes to document our data sources and external references.  
+Each footnote explains how the source is relevant for a specific part of our analysis.
 
-[^covid_source]: The COVID-19 data were sourced from the *Our World in Data* COVID-19 database. This database compiles daily confirmed COVID-19 cases and deaths from national and international official sources, and presents the information in a common format. The cumulative number of confirmed COVID-19 cases per country during 2020 was used to represent the COVID-19 burden per country. (See Our World in Data, **Coronavirus (COVID-19) Cases**, accessed Nov 2025, https://ourworldindata.org/covid-cases.) :contentReference[oaicite:0]{index=0}
+[^climate_source]: **Relevance:** Provides the country-level climate awareness percentages used to construct `share_aware_alot` and the awareness groups in Figures \@ref(fig:insight1) and \@ref(fig:insight3).  
+From Meta Data for Good, *Climate Change Opinion Survey*, accessed November 2025.  
+URL: https://dataforgood.facebook.com/dfg/tools/climate-change-opinion-survey
 
-[^happiness_source]: The country level happiness data were taken from the *World Happiness Report*. Each year, the *World Happiness Report* uses the Cantril Ladder Question to rank countries by self-reported life evaluations and reports various other indicators such as income and social support. The latest available self-reported life evaluation scores for each country were used to represent national happiness. See **World Happiness Report**, accessed Nov 2025, https://www.worldhappiness.report/.) :contentReference[oaicite:1]{index=1}
+[^covid_source]: **Relevance:** Supplies the 2020 cumulative confirmed COVID-19 case counts by country used for `total_cases` in Figure \@ref(fig:insight2) and in the summary statistics table.  
+From Our World in Data, *Coronavirus (COVID-19) Cases*, accessed November 2025.  
+URL: https://ourworldindata.org/covid-cases
+
+[^happiness_source]: **Relevance:** Provides the “ladder” life-satisfaction scores used as our outcome variable `ladder_score` throughout the analysis.  
+From *World Happiness Report*, accessed November 2025.  
+URL: https://www.worldhappiness.report/
