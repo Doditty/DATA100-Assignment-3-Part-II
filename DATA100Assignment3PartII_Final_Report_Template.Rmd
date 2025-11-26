@@ -91,19 +91,22 @@ Explain how any combinations of data were performed. Explain what kind of join w
 
 ```{r}
 analysis_data <- climate_awareness |>
-mutate( share_aware_alot = aware_alot / aware_base,
-        share_aware_no   = aware_no   / aware_base ) |>
+  mutate(
+    share_aware_alot = aware_alot / aware_base,
+    share_aware_no = aware_no / aware_base
+    ) |>
   select(country, share_aware_alot, share_aware_no) |>
   inner_join(
     covid_2020 |>
       select(country, continent, total_cases),
-    by = "country") |>
+    by = "country"
+    ) |>
   inner_join(
     happiness |>
       select(country, year, ladder_score),
     by = "country"
     ) |>
-  drop_na(share_aware_alot, ladder_score)
+  drop_na(share_aware_alot, ladder_score, total_cases)
 
 analysis_data
 
@@ -123,9 +126,12 @@ analysis_data |>
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_x_continuous(labels = percent_format(accuracy = 1)) +
-  labs(x = "Share who know 'a lot' about climate change",
-       y = "Happiness (ladder score, 0–10)",
-       colour = "Continent")
+  labs(
+    x = "Share who know 'a lot' about climate change",
+    y = "Happiness (ladder score, 0–10)",
+    colour = "Continent"
+    )
+
 ```
 
 This insight is supported by the summary statistics in table \@ref(tab:summary_stats)
@@ -138,26 +144,30 @@ summary_table <- analysis_data |>
     mean_happiness = mean(ladder_score, na.rm = TRUE),
     sd_happiness = sd(ladder_score,   na.rm = TRUE),
     mean_share_aware_alot = mean(share_aware_alot, na.rm = TRUE),
-    mean_cases_per_capita = mean(cases_per_capita, na.rm = TRUE))
+    median_total_cases = median(total_cases, na.rm = TRUE)
+    )
 
-kable(summary_table,
-      digits = 2,
-      caption = "Summary statistics by continent for happiness, climate awareness, and
-      COVID-19 cases per capita.")
+kable(
+  summary_table,
+  digits = 2,
+  caption = "Summary statistics by continent for happiness, climate awareness, and total
+  COVID-19 cases.")
+
 ```
 
 The next insight that we found is shown in \@ref(fig:insight2).
 
 ```{r insight2, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
 analysis_data |>
-  filter(cases_per_capita > 0) |>
-  ggplot(aes(x = cases_per_capita, y = ladder_score, colour = continent)) +
+  filter(total_cases > 0) |>
+  ggplot(aes(x = total_cases, y = ladder_score, colour = continent)) +
   geom_point(alpha = 0.7) +
   geom_smooth(se = FALSE) +
-  scale_x_log10(labels = label_number_si()) +
-  labs(x = "COVID-19 cases per capita (log scale)",
+  scale_x_log10(labels = scales::label_number()) +
+  labs(x = "Total confirmed COVID-19 cases in 2020 (log scale)",
        y = "Happiness (ladder score, 0–10)",
        colour = "Continent")
+
 ```
 
 Finally, \@ref(fig:insight3) shows ...
@@ -168,7 +178,7 @@ analysis_data |>
     awareness_group = case_when(
       share_aware_alot < 0.20 ~ "Low awareness (<20%)",
       share_aware_alot < 0.40 ~ "Moderate awareness (20–40%)",
-      TRUE                   ~ "High awareness (≥40%)")
+      TRUE ~ "High awareness (≥40%)")
     ) |>
   ggplot(aes(x = awareness_group, y = ladder_score, fill = awareness_group)) +
   geom_boxplot(alpha = 0.8, show.legend = FALSE) +
