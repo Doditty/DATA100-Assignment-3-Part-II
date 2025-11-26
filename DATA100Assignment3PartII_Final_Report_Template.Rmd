@@ -29,10 +29,8 @@ knitr::opts_chunk$set(
 
 # Abstract
 
-This report explores how climate change awareness, hurricane strengths in the oceans, and ice extents relate to each other by year. Using three cleaned data sets on climate change awareness (climate_awareness), hurricane strength in both the Atlantic and North Pacific basins (cyclone_data), and yearly ice extent for the Arctic and the Antarctic poles (ice_extent), we join the data by country to form a single analysis table.
+This report explores how climate change awareness, the COVID-19 burden, and national happiness relate to each other across countries. Using three cleaned data sets on climate change awareness (climate_awareness), COVID-19 2020 data (covid_2020), and world_happiness levels, we join the data by country to form a single analysis table.
 
-
-By combing global climate-awareness estimates with 
 We compute summary statistics and create three visualizations to examine how the share of people who say they know "a lot" about climate change and the burden of COVID-19 cases are associated with national happiness scores. Overall, we find a modest positive association between climate awareness and happiness, while the relationship between COVID-19 case counts happiness appears weaker and more variable across continents.
 
 # Introduction
