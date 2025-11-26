@@ -33,9 +33,10 @@ This report explores how climate change awareness, the COVID-19 burden, and nati
 
 We compute summary statistics and create three visualizations to examine how the share of people who say they know "a lot" about climate change and the burden of COVID-19 cases are associated with national happiness scores. We explore how climate change awareness relates to national happiness, how COVID-19 cases per capita relates to happiness, and how happiness varies across continents and across groups of countries with different levels of climate awareness.
 
-Overall, we find a modest positive association between climate awareness and happiness, while the relationship between COVID-19 case counts happiness appears weaker and more variable across continents.
+Overall, we find a modest positive association between climate awareness and happiness, while the relationship between COVID-19 case counts and happiness appears weaker and more variable across continents.
 
 # Introduction
+
 Climate change, the COVID-19 pandemic, and well-being are three of the most important global issues of the past decade. Governments and researchers are interested not only in physical outcomes such as case counts or temperature changes, but also in how people understand these issues and how they relate to quality of life. Public awareness of climate change may influence policy support and adaptation, while the COVID-19 pandemic has affected health systems, economies, and everyday life. Happiness data provide a way to summarize how people feel about their lives in different countries.
 
 # Data Description
