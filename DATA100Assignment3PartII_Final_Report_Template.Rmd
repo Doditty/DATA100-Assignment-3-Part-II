@@ -114,7 +114,7 @@ analysis_data
 
 # Exploratory Data Analysis
 
-To achieve our goals, we explored the data by examining: how climate change awarness relates to national happiness, how total COVID-19 cases relate to happiness, and how happiness varies across continents and across groups of countries with different levels of climate awareness.
+To achieve our goals, we explored the data by examining: how climate change awareness relates to national happiness, how total COVID-19 cases relate to happiness, and how happiness varies across continents and across groups of countries with different levels of climate awareness.
 
 We explored many aspects of the data, but will demonstrate three. These are a scatterplot of awareness vs. happiness, a scatterplot of total COVID-19 cases vs. happiness, and a comparison of happiness across awareness groups.
 
