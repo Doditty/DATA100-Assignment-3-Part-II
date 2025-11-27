@@ -33,9 +33,9 @@ library(knitr)
 
 # Abstract
 
-This report explores how climate change awareness, the COVID-19 burden, and national happiness relate to each other across countries. Using three cleaned data sets on climate change awareness (climate_awareness), COVID-19 2020 data (covid_2020), and world_happiness levels, we join the data by country to form a single analysis table.
+This report explores how climate change awareness, the COVID-19, and national happiness relate to each other across countries. Using three cleaned data sets on climate change awareness (climate_awareness), COVID-19 2020 data (covid_2020), and world_happiness levels, we join the data by country to form a single analysis table.
 
-We compute summary statistics and create three visualizations to examine how the share of people who say they know "a lot" about climate change and the burden of COVID-19 cases are associated with national happiness scores. We explore how climate change awareness relates to national happiness, how COVID-19 cases per capita relates to happiness, and how happiness varies across continents and across groups of countries with different levels of climate awareness.
+We compute summary statistics and create three visualizations to examine how the share of people who say they know "a lot" about climate change and the burden of COVID-19 cases are associated with national happiness scores. We explore how climate change awareness relates to national happiness, how COVID-19 cases relates to happiness, and how happiness varies across continents and across groups of countries with different levels of climate awareness.
 
 Overall, we find a modest positive association between climate awareness and happiness, while the relationship between COVID-19 case counts and happiness appears weaker and more variable across continents.
 
@@ -105,11 +105,11 @@ analysis_data <- climate_awareness |>
 
 # Exploratory Data Analysis
 
-To achieve our goals, we explored the data by examining: how climate change awarness relates to national happiness, how total COVID-19 cases relate to happiness, and how happiness varies across continents and across groups of countries with different levels of climate awareness.
+To achieve our goals, we explored the data by examining: how climate change awareness relates to national happiness, how total COVID-19 cases relate to happiness, and how happiness varies across continents and across groups of countries with different levels of climate awareness.
 
 We explored many aspects of the data, but will demonstrate three. These are a scatterplot of awareness vs. happiness, a scatterplot of total COVID-19 cases vs. happiness, and a comparison of happiness across awareness groups.
 
-The first aspect that we found interesting is shown in \@ref(fig:insight1). The insight should be specific to the data shown, not a general statement beyond the data (leave that for the conclusion).
+The first aspect that we found interesting is shown in \@ref(fig:insight1). The insight should be specific to the data shown, not a general statement beyond the data.
 
 ```{r insight1, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items.", fig.pos="H"}
 analysis_data |>
@@ -172,7 +172,7 @@ analysis_data |>
 Figure \@ref(fig:insight2) shows that the positive association between climate awareness and happiness is not identical across continents. In some regions, such as [insert the regions that appear strongest/clearest once you knit], the upward trend is more pronounced, while in others the relationship is weaker or based on fewer countries. This suggests that regional context may influence how climate awareness relates to well-being, and that other factors not included in our analysis, such as income or inequality, may also play an important role.
 
 
-Finally, Figure \@ref(fig:insight3) compares average happiness between countries with higher and lower levels of climate awareness. For this plot we classify countries into two groups based on whether their `share_aware_alot` is above or below the median value across all countries.
+Finally, Figure \@ref(fig:insight3) compares average happiness between countries with higher and lower levels of climate awareness. For this plot we classify countries into two groups based on whether their share_aware_alot is above or below the median value across all countries.
 
 ```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items.", fig.pos="H"}
 analysis_data |>
